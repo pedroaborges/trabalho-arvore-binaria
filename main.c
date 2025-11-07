@@ -2,6 +2,20 @@
 #include <string.h>
 #include <stdlib.h>
 
+typedef struct Node {
+    int code; // chave de busca (tem que ser única)
+    char name[100];         // nome produto, nao tem obrigatorio no trabalho mas faz sentido ter um nome
+    char description[100];     //descrição do produto
+    int quantity;          // quantidade em estoque
+    float price;             // preço do produto
+    int guarantee;      // campo opcional: garantia em meses
+    char fornecedor[50];     // campo opcional: nome do fornecedor
+    struct Node* esquerda;     // ponteiro para o nó à esquerda
+    struct Node* direita;      // ponteiro para o nó à direita
+} Node;
+
+//fazer função pra criar novo no
+//fazer funçoes da arvore binaria de busca para implementar nas funçoes abaixo
 
 void insertProduct() {
     printf("\ninsertProduct\n");
