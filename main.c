@@ -35,6 +35,35 @@ Node* insert(Node* root, int value) {
     
 }
 
+void preOrder(Node* root) {
+    if (root != NULL) {
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
+               root->code, root->name, root->quantity, root->price);
+        preOrder(root->left);
+        preOrder(root->right);
+    }
+}
+
+void inOrder(Node* root) {
+    if (root != NULL) {
+        inOrder(root->left);
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
+               root->code, root->name, root->quantity, root->price);
+        inOrder(root->right);
+    }
+
+}
+
+void posOrder(Node* root) {
+    if (root != NULL) {
+        posOrder(root->left);
+        posOrder(root->right);
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
+               root->code, root->name, root->quantity, root->price);
+    }
+}
+
+
 // funções do menu
 void insertProduct() {
     printf("\ninsertProduct\n");
@@ -186,5 +215,6 @@ void menu(){
 }
 
 void main(){
+    Node* root = NULL;
     menu();
 }
