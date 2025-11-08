@@ -3,20 +3,39 @@
 #include <stdlib.h>
 
 typedef struct Node {
-    int code; // chave de busca (tem que ser única)
+    int code;               // chave de busca (tem que ser única)
     char name[100];         // nome produto, nao tem obrigatorio no trabalho mas faz sentido ter um nome
-    char description[100];     //descrição do produto
-    int quantity;          // quantidade em estoque
-    float price;             // preço do produto
-    int guarantee;      // campo opcional: garantia em meses
-    char fornecedor[50];     // campo opcional: nome do fornecedor
-    struct Node* esquerda;     // ponteiro para o nó à esquerda
-    struct Node* direita;      // ponteiro para o nó à direita
+    char description[100];  //descrição do produto
+    int quantity;           // quantidade em estoque
+    float price;            // preço do produto
+    int guarantee;          // campo opcional: garantia em meses
+    char supplier[50];      // campo opcional: nome do fornecedor
+    struct Node* left;      // ponteiro para o nó à esquerda
+    struct Node* right;     // ponteiro para o nó à direita
 } Node;
 
-//fazer função pra criar novo no
-//fazer funçoes da arvore binaria de busca para implementar nas funçoes abaixo
+Node* createNode(int code, char name[], char description[], int quantity, float price, int guarantee,  char supplier[]) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->code = code;
 
+    strcpy(newNode->name, name);
+    strcpy(newNode->description, description);
+    newNode->quantity = quantity;
+    newNode->price = price;
+    newNode->guarantee = guarantee;
+    strcpy(newNode->supplier, supplier);
+    
+    newNode->left = newNode->right = NULL;
+
+    return newNode;
+}
+
+//fazer funçoes da arvore binaria de busca para implementar nas funçoes abaixo
+Node* insert(Node* root, int value) {
+    
+}
+
+// funções do menu
 void insertProduct() {
     printf("\ninsertProduct\n");
 }
@@ -45,21 +64,19 @@ void listProductsAterOrder() {
     printf("\nlistProductsAterOrder\n");
 }
 
-void complement1() {
+void consultProductsParcialDescription() {
     printf("\ncomplement1\n");
 }
 
-void complement2() {
+void consultProductsPriceRange() {
     printf("\ncomplement2\n");
 }
 
-void complement3() {
+void countProducts() {
     printf("\ncomplement3\n");
 }
 
 void menu(){
-
-
     int option;
 
     do {
@@ -68,13 +85,13 @@ void menu(){
             "\n|         TECHINFO          |"
             "\n+---------------------------+"
             "\n"
-            "\n  > 1. Inserir Produto"
-            "\n  > 2. Consultar Produto"
-            "\n  > 3. Remover Produto"
-            "\n  > 4. Listar Produto"
-            "\n  > 5. Complemento 1"
-            "\n  > 6. Complemento 2"
-            "\n  > 7. Complemento 3"
+            "\n  > 1. Inserir produto"
+            "\n  > 2. Consultar produto"
+            "\n  > 3. Remover produto"
+            "\n  > 4. Listar produto"
+            "\n  > 5. Buscar por descricao"
+            "\n  > 6. Buscar por preço"
+            "\n  > 7. Contar produtos"
             "\n  > 8. Sair"
             "\n============================="
             "\nSelecione uma opcao >> "
@@ -83,26 +100,23 @@ void menu(){
 
         switch (option) {
             case 1: {
-
                 insertProduct();
                 break;
 
             }
             case 2: {
-                
                 consultProduct();
                 break;
 
             }
             case 3: {
-                
                 removeProduct();
                 break;
 
             }
             case 4: {
-
                 int listOption;
+
                 do {
                     printf(
                         "\n+-------------------------------+"
@@ -120,22 +134,18 @@ void menu(){
 
                     switch(listOption) {
                         case 1: 
-
                             printf("Listando em-ordem...\n"); 
                             break;
                             
                         case 2: 
-
                             printf("Listando pre-ordem...\n"); 
                             break;
 
                         case 3: 
-
                             printf("Listando pos-ordem...\n"); 
                             break;
                             
                         case 4: 
-
                             printf("Voltando ao menu principal...\n"); 
                             break;
 
@@ -148,30 +158,25 @@ void menu(){
                 break;
             }
             case 5: {
-
-                complement1();
+                consultProductsParcialDescription();
                 break;
 
             }
             case 6: {
-
-                complement2();
+                consultProductsPriceRange();
                 break;
 
             }
             case 7: {
-
-                complement3();
+                countProducts();
                 break;
 
             }
             case 8: {
-
                 printf("\nEncerrando o sistema... Obrigado por usar o TECHINFO!\n");
                 break;
 
             }
-
             default:
                 printf("<* Setor invalido! *>\n");
 
@@ -180,9 +185,6 @@ void menu(){
     } while (option != 8);
 }
 
-int main(){
-
+void main(){
     menu();
-
-    return 0;
 }
