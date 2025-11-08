@@ -50,6 +50,7 @@ Node* insert(Node* root, Node* newNode) {
 	        return root;
 	    } else {
             printf("\n<* Codigo existente! *>\n");
+            return root;
         }
     }
 }
@@ -100,11 +101,18 @@ Node* removeNode(Node* root, int code) {
             free(root);
 
             return temp;
+        } else {
+            Node* temp = smallestValue(root->right);
+            root->code = temp->code;
+            strcpy(root->name, temp->name);
+            strcpy(root->description, temp->description);
+            root->quantity = temp->quantity;
+            root->price = temp->price;
+            root->guarantee = temp->guarantee;
+            strcpy(root->supplier, temp->supplier);
+            root->right = removeNode(root->right, temp->code);
         }
 
-        Node* temp = smallestValue(root->right); 
-        root->code = temp->code;
-        root->right = removeNode(root->right, temp->code);
     }
 
     return root;
@@ -113,8 +121,8 @@ Node* removeNode(Node* root, int code) {
 void preOrder(Node* root) {
     if (root != NULL) {
         printf(
-            "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
-            root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
+            "\nCodigo: %d | Nome: %s | Descricao: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->description, root->quantity, root->price, root->guarantee, root->supplier
         );
 
         preOrder(root->left);
@@ -127,8 +135,8 @@ void inOrder(Node* root) {
         inOrder(root->left);
 
         printf(
-            "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
-            root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
+            "\nCodigo: %d | Nome: %s | Descricao: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->description, root->quantity, root->price, root->guarantee, root->supplier
         );
 
         inOrder(root->right);
@@ -142,14 +150,14 @@ void afterOrder(Node* root) {
         afterOrder(root->right);
 
         printf(
-            "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
-            root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
+            "\nCodigo: %d | Nome: %s | Descricao: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->description, root->quantity, root->price, root->guarantee, root->supplier
         );
     }
 }
 
 // Menu Functions
-Node* insertProduct(Node* root) {
+void insertProduct(Node** root) {
     char name[STRING_LENGHT], description[STRING_LENGHT], supplier[STRING_LENGHT];
     int code, quantity, guarantee;
     float price; 
@@ -165,10 +173,10 @@ Node* insertProduct(Node* root) {
     scanf("%d", &code);
 
     printf("\nNome >> ");
-    scanf(" %[^\n]", &name);
+    scanf(" %[^\n]", name);
 
     printf("\nDescricao >> ");
-    scanf(" %[^\n]", &description);
+    scanf(" %[^\n]", description);
 
     printf("\nQuantidade >> ");
     scanf("%d", &quantity);
@@ -180,12 +188,14 @@ Node* insertProduct(Node* root) {
     scanf("%d", &guarantee);
 
     printf("\nFornecedor >> ");
-    scanf(" %[^\n]", &supplier);
+    scanf(" %[^\n]", supplier);
+
+    Node* newNode = createNode(code, name, description, quantity, price, guarantee, supplier);
+    *root = insert(*root, newNode);
 
     printf("\n<* Produto cadastrado! *>\n");
 
-    Node* newNode = createNode(code, name, description, quantity, price, guarantee, supplier);
-    root = insert(root, newNode);
+
 }
 
 void consultProduct(Node* root) {
@@ -221,12 +231,12 @@ void consultProduct(Node* root) {
     );
 
     printf(
-        "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f",
-        result->code, result->name, result->quantity, result->price
+        "\nCodigo: %d | Nome: %s | Descricao: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+        result->code, result->name, result->description, result->quantity, result->price, result->guarantee, result->supplier
     );
 }
 
-void removeProduct(Node* root) {
+void removeProduct(Node** root) {
     int code;
 
     printf(
@@ -236,20 +246,27 @@ void removeProduct(Node* root) {
         "\n"
     );
 
+    if (*root == NULL) {
+        printf("\n<* Nenhum produto cadastrado *>\n");
+        return;
+    }
+
     printf("\nCodigo >> ");
     scanf("%d", &code);
 
-    Node* result = removeNode(root, code);
+    Node* found = consult(*root, code);
 
-    if (result == NULL) {
+    if (found == NULL) {
         printf("\n<* Produto nao encontrado! *>\n");
         return;
     }
 
-    printf(
-        "\n<* Produto %s removido! *>\n",
-        result->name
-    );
+    char nomeTemp[STRING_LENGHT];
+    strcpy(nomeTemp, found->name); // guarda nome antes de remover
+    *root = removeNode(*root, code);
+
+    printf("\n<* Produto %s removido! *>\n", nomeTemp);
+
 }
 
 void listProductsInOrder(Node* root) {
@@ -288,10 +305,35 @@ void listProductsAterOrder(Node* root) {
     printf("\n");
 }
 
+void searchByPartialDescription(Node* root, const char* query, int* foundCount) {
+    if (root == NULL) return;
+    searchByPartialDescription(root->left, query, foundCount);
+    if (strstr(root->description, query) != NULL) {
+        printf(
+            "\nCodigo: %d | Nome: %s | Descricao: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->description, root->quantity, root->price, root->guarantee, root->supplier
+        );
+        (*foundCount)++;
+    }
+    searchByPartialDescription(root->right, query, foundCount);
+}
+
+void searchByPriceRange(Node* root, float min, float max, int* foundCount) {
+    if (root == NULL) return;
+    searchByPriceRange(root->left, min, max, foundCount);
+    if (root->price >= min && root->price <= max) {
+        printf(
+            "\nCodigo: %d | Nome: %s | Descricao: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->description, root->quantity, root->price, root->guarantee, root->supplier
+        );
+        (*foundCount)++;
+    } 
+    searchByPriceRange(root->right, min, max, foundCount);
+}
+
 void consultProductsParcialDescription(Node* root) {
     char description[STRING_LENGHT];
     int productsCount = 0;
-    Node* current = root;
 
     printf(
         "\n+---------------------------+"
@@ -315,26 +357,17 @@ void consultProductsParcialDescription(Node* root) {
         "\n"
     );
 
-    while (current && current->left != NULL) {
-        if (strstr(root->description, description) != NULL) {
-            printf(
-                "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
-                current->code, current->name, current->quantity, current->price
-            );
-            productsCount++;
-        }
-
-        current = current->left;
-    }
+    searchByPartialDescription(root, description, &productsCount);
 
     if (productsCount == 0) {
         printf("\n<* Nenhum produto cadastrado *>\n");
     }
+
 }
 
 void consultProductsPriceRange(Node* root) {
-    Node* current = root;
     float min, max;
+    int productsCount = 0;
 
     printf(
         "\n+---------------------------+"
@@ -342,6 +375,11 @@ void consultProductsPriceRange(Node* root) {
         "\n+---------------------------+"
         "\n"
     );
+
+    if (root == NULL) {
+        printf("\n<* Nenhum produto cadastrado! *>\n");
+        return;
+    }
 
     printf("\nPreco minimo >> ");
     scanf("%f", &min);
@@ -356,26 +394,24 @@ void consultProductsPriceRange(Node* root) {
         "\n"
     );
 
+    searchByPriceRange(root, min, max, &productsCount);
+
     if (root == NULL) {
         printf("\n<* Nenhum produto cadastrado! *>\n");
         return;
+
+}
+}
+int countNodes(Node* root) {
+    if (root == NULL){
+        return 0;
     }
 
-    while (current && current->left != NULL) {
-        if(current->price >= min && current->price <= max) {
-            printf(
-                "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
-                root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
-            );
-        }
-
-        current = current->left;
-    }
+    return 1 + countNodes(root->left) + countNodes(root->right);
 }
 
 void countProducts(Node* root) {
-    int productsCount = 0;
-    Node* current = root;
+    int productsCount = countNodes(root);
 
     printf(
         "\n+---------------------------+"
@@ -384,24 +420,11 @@ void countProducts(Node* root) {
         "\n"
     );
 
-    if (root == NULL) {
-        printf("\n<* Nenhum produto cadastrado! *>\n");
-        return;
-    }
-
-    while (current && current->left != NULL) {
-        current = current->left;
-        productsCount++;
-    }
-
-    printf(
-        "\n<* %d produtos cadastrados! *>\n",
-        productsCount
-    );
+    printf("\n<* %d produtos cadastrados! *>\n", productsCount);
 }
 
 // Menu
-void menu(Node* root){
+void menu(Node** root){
     int option;
 
     do {
@@ -430,7 +453,7 @@ void menu(Node* root){
 
             }
             case 2: {
-                consultProduct(root);
+                consultProduct(*root);
                 break;
 
             }
@@ -459,15 +482,15 @@ void menu(Node* root){
 
                     switch(listOption) {
                         case 1: 
-                            listProductsInOrder(root);
+                            listProductsInOrder(*root);
                             break;
                             
                         case 2: 
-                            listProductsPreOrder(root); 
+                            listProductsPreOrder(*root); 
                             break;
 
                         case 3: 
-                            listProductsAterOrder(root); 
+                            listProductsAterOrder(*root); 
                             break;
                             
                         case 4: 
@@ -483,17 +506,17 @@ void menu(Node* root){
                 break;
             }
             case 5: {
-                consultProductsParcialDescription(root);
+                consultProductsParcialDescription(*root);
                 break;
 
             }
             case 6: {
-                consultProductsPriceRange(root);
+                consultProductsPriceRange(*root);
                 break;
 
             }
             case 7: {
-                countProducts(root);
+                countProducts(*root);
                 break;
 
             }
@@ -510,7 +533,9 @@ void menu(Node* root){
     } while (option != 8);
 }
 
-void main(){
+int main(){
     Node* root = NULL;
-    menu(root);
+    menu(&root);
+
+    return 0;
 }
