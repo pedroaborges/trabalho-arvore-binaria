@@ -108,8 +108,8 @@ Node* removeNode(Node* root, int code) {
 
 void preOrder(Node* root) {
     if (root != NULL) {
-        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
-               root->code, root->name, root->quantity, root->price);
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+               root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier);
         preOrder(root->left);
         preOrder(root->right);
     }
@@ -118,8 +118,8 @@ void preOrder(Node* root) {
 void inOrder(Node* root) {
     if (root != NULL) {
         inOrder(root->left);
-        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
-               root->code, root->name, root->quantity, root->price);
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+               root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier);
         inOrder(root->right);
     }
 
@@ -129,8 +129,8 @@ void afterOrder(Node* root) {
     if (root != NULL) {
         afterOrder(root->left);
         afterOrder(root->right);
-        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
-               root->code, root->name, root->quantity, root->price);
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+               root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier);
     }
 }
 
@@ -147,32 +147,119 @@ void removeProduct() {
     printf("\nremoveProduct\n");
 }
 
-void listarProdutos() {
-    printf("\nlistarProdutos\n");
+
+void listProductsInOrder(Node* root) {
+        printf(
+            "\n+---------------------------+"
+            "\n|     Listando em ordem     |"
+            "\n+---------------------------+"
+            "\n"
+        );
+        inOrder(root);
+        printf("\n");
 }
 
-void listProductsInOrder() {
-    printf("\nlistProductsInOrder\n");
+void listProductsPreOrder(Node* root) {
+        printf(
+            "\n+---------------------------+"
+            "\n|    Listando pre ordem     |"
+            "\n+---------------------------+"
+            "\n"
+        );
+        preOrder(root);
+        printf("\n");
 }
 
-void listProductsPreOrder() {
-    printf("\nlistProductsPreOrder\n");
+void listProductsAterOrder(Node* root) {
+        printf(
+            "\n+---------------------------+"
+            "\n|    Listando pos ordem     |"
+            "\n+---------------------------+"
+            "\n"
+        );
+        afterOrder(root);
+        printf("\n");
 }
 
-void listProductsAterOrder() {
-    printf("\nlistProductsAterOrder\n");
+void consultProductsParcialDescription(Node* root, char desc[]) {
+    if (root == NULL){
+        printf("\n<* Nenhum produto cadastrado *>");
+        return;
+    }
+    
+    consultProductsParcialDescription(root->left, desc);
+    
+    if (strstr(root->description, desc) != NULL) {
+        printf(
+        "\n+---------------------------+"
+        "\n|   PRODUTOS ENCONTRADOS    |"
+        "\n+---------------------------+"
+        "\n"
+    );
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+               root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier);
+    }
+
+    searchByDescription(root->right, desc);
 }
 
-void consultProductsParcialDescription() {
-    printf("\ncomplement1\n");
+
+void consultProductsPriceRange(Node* root) {
+    Node* current = root;
+    float min, max;
+    printf("\nPreco minimo >> ");
+    scanf("%f", &min);
+
+    printf("\nPreco maximo >> ");
+    scanf("%f", &max);
+
+    printf(
+        "\n+---------------------------+"
+        "\n|   PRODUTOS ENCONTRADOS    |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    if (root == NULL) {
+        printf("\n<* Nenhum produto cadastrado! *>");
+        return;
+    }
+
+    while (current && current->left != NULL) {
+        if(current->price >= min && current->price <= max){
+            printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+               root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier);
+        }
+    current = current->left;
+    }
 }
 
-void consultProductsPriceRange() {
-    printf("\ncomplement2\n");
-}
 
-void countProducts() {
-    printf("\ncomplement3\n");
+void countProducts(Node* root) {
+    int productsCount = 0;
+    Node* current = root;
+
+    printf(
+        "\n+---------------------------+"
+        "\n|    CONTADOR DE PRODUTOS   |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    if (root == NULL) {
+        printf("\n<* Nenhum produto cadastrado! *>");
+        return;
+    }
+
+    while (current && current->left != NULL) {
+        current = current->left;
+        productsCount++;
+    }
+
+    printf(
+        "\n<* %d produtos cadastrados! *>",
+        productsCount
+    );
 }
 
 // Menu
