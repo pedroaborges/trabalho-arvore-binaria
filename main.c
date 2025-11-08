@@ -2,18 +2,20 @@
 #include <string.h>
 #include <stdlib.h>
 
+// Node Struct
 typedef struct Node {
-    int code;               // chave de busca (tem que ser única)
-    char name[100];         // nome produto, nao tem obrigatorio no trabalho mas faz sentido ter um nome
-    char description[100];  //descrição do produto
-    int quantity;           // quantidade em estoque
-    float price;            // preço do produto
-    int guarantee;          // campo opcional: garantia em meses
-    char supplier[50];      // campo opcional: nome do fornecedor
-    struct Node* left;      // ponteiro para o nó à esquerda
-    struct Node* right;     // ponteiro para o nó à direita
+    int code;               // Search code (unique)
+    char name[100];         // Product's name
+    char description[100];  // Product's description
+    int quantity;           // In stock quantity
+    float price;            // Product's price
+    int guarantee;          // Optional: product's guarantee in months
+    char supplier[50];      // Optional: Supllier's name
+    struct Node* left;      // Pointer to the left node
+    struct Node* right;     // Pointer to the right node
 } Node;
 
+// Node Struct Implementation Functions
 Node* createNode(int code, char name[], char description[], int quantity, float price, int guarantee,  char supplier[]) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->code = code;
@@ -30,12 +32,109 @@ Node* createNode(int code, char name[], char description[], int quantity, float 
     return newNode;
 }
 
-//fazer funçoes da arvore binaria de busca para implementar nas funçoes abaixo
-Node* insert(Node* root, int value) {
-    
+Node* insert(Node* root, int code, char name[], char description[], int quantity, float price, int guarantee,  char supplier[]) {
+    if (root == NULL) {
+        return createNode(code, name, description, quantity, price, guarantee, supplier);
+    }
+        
+    if (code < root->code) {
+	    root->left = insert(root->left, code, name, description, quantity, price, guarantee, supplier);
+	    return root;
+    } else {
+        if (code > root->code) {
+		    root->right = insert(root->right, code, name, description, quantity, price, guarantee, supplier);
+		    return root;
+	    } else {
+            return root;
+        }
+    }
 }
 
-// funções do menu
+Node* consult(Node* root, int code) {
+    if (root == NULL || root->code == code) {
+        return root;
+    }
+    
+    if (code < root->code) {
+        return consult(root->left, code);
+    } else {
+        return consult(root->right, code);
+    }
+}
+
+Node* smallestValue(Node* root) {
+    Node* current = root;
+
+    while (current && current->left != NULL) {
+        current = current->left;
+    }
+    
+    return current;
+}
+
+Node* removeNode(Node* root, int code) {
+    if (root == NULL) {
+        return root;
+    }
+
+    if (code < root->code) {
+        root->left = removeNode(root->left, code);
+    } else if (code > root->code) {
+        root->right = removeNode(root->right, code);
+    } else {
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+
+            return NULL;
+        } else if (root->left == NULL) {
+            Node* temp = root->right;
+            free(root);
+
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            free(root);
+
+            return temp;
+        }
+
+        Node* temp = smallestValue(root->right); 
+        root->code = temp->code;
+        root->right = removeNode(root->right, temp->code);
+    }
+
+    return root;
+}
+
+void preOrder(Node* root) {
+    if (root != NULL) {
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
+               root->code, root->name, root->quantity, root->price);
+        preOrder(root->left);
+        preOrder(root->right);
+    }
+}
+
+void inOrder(Node* root) {
+    if (root != NULL) {
+        inOrder(root->left);
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
+               root->code, root->name, root->quantity, root->price);
+        inOrder(root->right);
+    }
+
+}
+
+void afterOrder(Node* root) {
+    if (root != NULL) {
+        afterOrder(root->left);
+        afterOrder(root->right);
+        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
+               root->code, root->name, root->quantity, root->price);
+    }
+}
+
+// Menu Functions
 void insertProduct() {
     printf("\ninsertProduct\n");
 }
@@ -76,6 +175,7 @@ void countProducts() {
     printf("\ncomplement3\n");
 }
 
+// Menu
 void menu(){
     int option;
 
@@ -186,5 +286,7 @@ void menu(){
 }
 
 void main(){
+    Node* root = NULL;
+
     menu();
 }
