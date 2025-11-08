@@ -1,18 +1,22 @@
+// Libraries
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+// Settings
+#define STRING_LENGHT 100
+
 // Node Struct
 typedef struct Node {
-    int code;               // Search code (unique)
-    char name[100];         // Product's name
-    char description[100];  // Product's description
-    int quantity;           // In stock quantity
-    float price;            // Product's price
-    int guarantee;          // Optional: product's guarantee in months
-    char supplier[50];      // Optional: Supllier's name
-    struct Node* left;      // Pointer to the left node
-    struct Node* right;     // Pointer to the right node
+    int code;                           // Search code (unique)
+    char name[STRING_LENGHT];           // Product's name
+    char description[STRING_LENGHT];    // Product's description
+    int quantity;                       // In stock quantity
+    float price;                        // Product's price
+    int guarantee;                      // Optional: product's guarantee in months
+    char supplier[STRING_LENGHT];       // Optional: Supllier's name
+    struct Node* left;                  // Pointer to the left node
+    struct Node* right;                 // Pointer to the right node
 } Node;
 
 // Node Struct Implementation Functions
@@ -108,8 +112,11 @@ Node* removeNode(Node* root, int code) {
 
 void preOrder(Node* root) {
     if (root != NULL) {
-        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
-               root->code, root->name, root->quantity, root->price);
+        printf(
+            "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
+        );
+
         preOrder(root->left);
         preOrder(root->right);
     }
@@ -118,8 +125,12 @@ void preOrder(Node* root) {
 void inOrder(Node* root) {
     if (root != NULL) {
         inOrder(root->left);
-        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
-               root->code, root->name, root->quantity, root->price);
+
+        printf(
+            "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
+        );
+
         inOrder(root->right);
     }
 
@@ -129,54 +140,267 @@ void afterOrder(Node* root) {
     if (root != NULL) {
         afterOrder(root->left);
         afterOrder(root->right);
-        printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
-               root->code, root->name, root->quantity, root->price);
+
+        printf(
+            "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+            root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
+        );
     }
 }
 
 // Menu Functions
-void insertProduct() {
-    printf("\ninsertProduct\n");
+Node* insertProduct() {
+    char name[STRING_LENGHT], description[STRING_LENGHT], supplier[STRING_LENGHT];
+    int code, quantity, guarantee;
+    float price; 
+
+    printf(
+        "\n+---------------------------+"
+        "\n|      INSERIR PRODUTO      |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    printf("\nCodigo >> ");
+    scanf("%d", &code);
+
+    printf("\nNome >> ");
+    scanf(" %[^\n]", &name);
+
+    printf("\nDescricao >> ");
+    scanf(" %[^\n]", &description);
+
+    printf("\nQuantidade >> ");
+    scanf("%d", &quantity);
+
+    printf("\nPreco >> ");
+    scanf("%f", &price);
+
+    printf("\nGarantia (meses) >> ");
+    scanf("%d", &guarantee);
+
+    printf("\nFornecedor >> ");
+    scanf(" %[^\n]", &supplier);
+
+    printf("\n<* Produto cadastrado! *>\n");
+
+    return createNode(code, name, description, quantity, price, guarantee, supplier);
 }
 
-void consultProduct() {
-    printf("\nconsultProduct\n");
+void consultProduct(Node* root) {
+    int code;
+
+    printf(
+        "\n+---------------------------+"
+        "\n|     CONSULTAR PRODUTO     |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    if (root == NULL){
+        printf("\n<* Nenhum produto cadastrado *>\n");
+        return;
+    }
+
+    printf("\nCodigo >> ");
+    scanf("%d", &code);
+
+    Node* result = consult(root, code);
+
+    if (result == NULL) {
+        printf("\n<* Produto nao encontrado! *>\n");
+        return;
+    }
+
+    printf(
+        "\n+---------------------------+"
+        "\n|   PRODUTOS ENCONTRADOS    |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    printf(
+        "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f",
+        result->code, result->name, result->quantity, result->price
+    );
 }
 
-void removeProduct() {
-    printf("\nremoveProduct\n");
+void removeProduct(Node* root) {
+    int code;
+
+    printf(
+        "\n+---------------------------+"
+        "\n|      REMOVER PRODUTO      |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    printf("\nCodigo >> ");
+    scanf("%d", &code);
+
+    Node* result = removeNode(root, code);
+
+    if (result == NULL) {
+        printf("\n<* Produto nao encontrado! *>\n");
+        return;
+    }
+
+    printf(
+        "\n<* Produto %s removido! *>\n",
+        result->name
+    );
 }
 
-void listarProdutos() {
-    printf("\nlistarProdutos\n");
+void listProductsInOrder(Node* root) {
+    printf(
+        "\n+---------------------------+"
+        "\n|     LISTAGEM EM ORDEM     |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    inOrder(root);
+    printf("\n");
 }
 
-void listProductsInOrder() {
-    printf("\nlistProductsInOrder\n");
+void listProductsPreOrder(Node* root) {
+    printf(
+        "\n+---------------------------+"
+        "\n|   LISTAGEM EM PRE ORDEM   |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    preOrder(root);
+    printf("\n");
 }
 
-void listProductsPreOrder() {
-    printf("\nlistProductsPreOrder\n");
+void listProductsAterOrder(Node* root) {
+    printf(
+        "\n+---------------------------+"
+        "\n|   LISTAGEM EM POS ORDEM   |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    afterOrder(root);
+    printf("\n");
 }
 
-void listProductsAterOrder() {
-    printf("\nlistProductsAterOrder\n");
+void consultProductsParcialDescription(Node* root) {
+    char description[STRING_LENGHT];
+    int productsCount = 0;
+    Node* current = root;
+
+    printf(
+        "\n+---------------------------+"
+        "\n|     CONSULTAR PRODUTO     |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    if (root == NULL){
+        printf("\n<* Nenhum produto cadastrado *>\n");
+        return;
+    }
+
+    printf("\nDescricao (parcial) >> ");
+    scanf(" %[^\n]", &description);
+
+    printf(
+        "\n+---------------------------+"
+        "\n|  PRODUTO(S) ENCONTRADO(S) |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    while (current && current->left != NULL) {
+        if (strstr(root->description, description) != NULL) {
+            printf(
+                "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
+                current->code, current->name, current->quantity, current->price
+            );
+            productsCount++;
+        }
+
+        current = current->left;
+    }
+
+    if (productsCount == 0) {
+        printf("\n<* Nenhum produto cadastrado *>\n");
+    }
 }
 
-void consultProductsParcialDescription() {
-    printf("\ncomplement1\n");
+void consultProductsPriceRange(Node* root) {
+    Node* current = root;
+    float min, max;
+
+    printf(
+        "\n+---------------------------+"
+        "\n|     CONSULTAR PRODUTO     |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    printf("\nPreco minimo >> ");
+    scanf("%f", &min);
+
+    printf("\nPreco maximo >> ");
+    scanf("%f", &max);
+
+    printf(
+        "\n+---------------------------+"
+        "\n| PRODUTO(S) ENCONTRADO(S)  |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    if (root == NULL) {
+        printf("\n<* Nenhum produto cadastrado! *>\n");
+        return;
+    }
+
+    while (current && current->left != NULL) {
+        if(current->price >= min && current->price <= max) {
+            printf(
+                "\nCodigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f | Garantia: %d meses | Fornecedor: %s\n",
+                root->code, root->name, root->quantity, root->price, root->guarantee, root->supplier
+            );
+        }
+
+        current = current->left;
+    }
 }
 
-void consultProductsPriceRange() {
-    printf("\ncomplement2\n");
-}
+void countProducts(Node* root) {
+    int productsCount = 0;
+    Node* current = root;
 
-void countProducts() {
-    printf("\ncomplement3\n");
+    printf(
+        "\n+---------------------------+"
+        "\n|    CONTADOR DE PRODUTOS   |"
+        "\n+---------------------------+"
+        "\n"
+    );
+
+    if (root == NULL) {
+        printf("\n<* Nenhum produto cadastrado! *>\n");
+        return;
+    }
+
+    while (current && current->left != NULL) {
+        current = current->left;
+        productsCount++;
+    }
+
+    printf(
+        "\n<* %d produtos cadastrados! *>\n",
+        productsCount
+    );
 }
 
 // Menu
-void menu(){
+void menu(Node* root){
     int option;
 
     do {
@@ -194,7 +418,7 @@ void menu(){
             "\n  > 7. Contar produtos"
             "\n  > 8. Sair"
             "\n============================="
-            "\nSelecione uma opcao >> "
+            "\nOpcao desejada >> "
         );
         scanf("%d", &option);
 
@@ -205,12 +429,12 @@ void menu(){
 
             }
             case 2: {
-                consultProduct();
+                consultProduct(root);
                 break;
 
             }
             case 3: {
-                removeProduct();
+                removeProduct(root);
                 break;
 
             }
@@ -219,38 +443,38 @@ void menu(){
 
                 do {
                     printf(
-                        "\n+-------------------------------+"
-                        "\n|     LISTAGEM DE PRODUTOS      |"
-                        "\n+-------------------------------+"
+                        "\n+---------------------------+"
+                        "\n|   LISTAGEM DE PRODUTOS    |"
+                        "\n+---------------------------+"
                         "\n"
-                        "\n1. Em-ordem (crescente por codigo)"
-                        "\n2. Pre-ordem"
-                        "\n3. Pos-ordem"
-                        "\n4. Voltar"
-                        "\n---------------------------------"
-                        "\nEscolha uma opcao >> "
+                        "\n  > 1. Em ordem"
+                        "\n  > 2. Pre ordem"
+                        "\n  > 3. Pos ordem"
+                        "\n  > 4. Sair"
+                        "\n============================="
+                        "\nOpcao desejada >> "
                     );
                     scanf("%d", &listOption);
 
                     switch(listOption) {
                         case 1: 
-                            printf("Listando em-ordem...\n"); 
+                            listProductsInOrder(root);
                             break;
                             
                         case 2: 
-                            printf("Listando pre-ordem...\n"); 
+                            listProductsPreOrder(root); 
                             break;
 
                         case 3: 
-                            printf("Listando pos-ordem...\n"); 
+                            listProductsAterOrder(root); 
                             break;
                             
                         case 4: 
-                            printf("Voltando ao menu principal...\n"); 
+                            printf("\n<* Retornando ao menu... *>\n");
                             break;
 
                         default: 
-                            printf("Opcao invalida!\n");
+                            printf("\n<* Opcao invalido! *>\n");
                     }
 
                 } while(listOption != 4);
@@ -258,27 +482,27 @@ void menu(){
                 break;
             }
             case 5: {
-                consultProductsParcialDescription();
+                consultProductsParcialDescription(root);
                 break;
 
             }
             case 6: {
-                consultProductsPriceRange();
+                consultProductsPriceRange(root);
                 break;
 
             }
             case 7: {
-                countProducts();
+                countProducts(root);
                 break;
 
             }
             case 8: {
-                printf("\nEncerrando o sistema... Obrigado por usar o TECHINFO!\n");
+                printf("\n<* Saindo... *>\n");
                 break;
 
             }
             default:
-                printf("<* Setor invalido! *>\n");
+                printf("\n<* Opcao invalido! *>\n");
 
                 break;
         }
@@ -287,6 +511,5 @@ void menu(){
 
 void main(){
     Node* root = NULL;
-
-    menu();
+    menu(root);
 }
