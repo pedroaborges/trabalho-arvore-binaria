@@ -50,6 +50,62 @@ Node* insert(Node* root, int code, char name[], char description[], int quantity
     }
 }
 
+Node* consult(Node* root, int code) {
+    if (root == NULL || root->code == code) {
+        return root;
+    }
+    
+    if (code < root->code) {
+        return consult(root->left, code);
+    } else {
+        return consult(root->right, code);
+    }
+}
+
+Node* smallestValue(Node* root) {
+    Node* current = root;
+
+    while (current && current->left != NULL) {
+        current = current->left;
+    }
+    
+    return current;
+}
+
+Node* removeNode(Node* root, int code) {
+    if (root == NULL) {
+        return root;
+    }
+
+    if (code < root->code) {
+        root->left = removeNode(root->left, code);
+    } else if (code > root->code) {
+        root->right = removeNode(root->right, code);
+    } else {
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+
+            return NULL;
+        } else if (root->left == NULL) {
+            Node* temp = root->right;
+            free(root);
+
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            free(root);
+
+            return temp;
+        }
+
+        Node* temp = smallestValue(root->right); 
+        root->code = temp->code;
+        root->right = removeNode(root->right, temp->code);
+    }
+
+    return root;
+}
+
 void preOrder(Node* root) {
     if (root != NULL) {
         printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
@@ -69,17 +125,16 @@ void inOrder(Node* root) {
 
 }
 
-void posOrder(Node* root) {
+void afterOrder(Node* root) {
     if (root != NULL) {
-        posOrder(root->left);
-        posOrder(root->right);
+        afterOrder(root->left);
+        afterOrder(root->right);
         printf("Codigo: %d | Nome: %s | Quantidade: %d | Preco: R$%.2f\n",
                root->code, root->name, root->quantity, root->price);
     }
 }
 
-
-// funções do menu
+// Menu Functions
 void insertProduct() {
     printf("\ninsertProduct\n");
 }
@@ -232,5 +287,6 @@ void menu(){
 
 void main(){
     Node* root = NULL;
+
     menu();
 }
