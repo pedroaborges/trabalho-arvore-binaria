@@ -36,20 +36,20 @@ Node* createNode(int code, char name[], char description[], int quantity, float 
     return newNode;
 }
 
-Node* insert(Node* root, int code, char name[], char description[], int quantity, float price, int guarantee,  char supplier[]) {
+Node* insert(Node* root, Node* newNode) {
     if (root == NULL) {
-        return createNode(code, name, description, quantity, price, guarantee, supplier);
+        return newNode;
     }
         
-    if (code < root->code) {
-	    root->left = insert(root->left, code, name, description, quantity, price, guarantee, supplier);
+    if (newNode->code < root->code) {
+	    root->left = insert(root->left, newNode);
 	    return root;
     } else {
-        if (code > root->code) {
-		    root->right = insert(root->right, code, name, description, quantity, price, guarantee, supplier);
-		    return root;
+        if (newNode->code > root->code) {
+		    root->right = insert(root->right, newNode);
+	        return root;
 	    } else {
-            return root;
+            printf("\n<* Codigo existente! *>\n");
         }
     }
 }
@@ -149,7 +149,7 @@ void afterOrder(Node* root) {
 }
 
 // Menu Functions
-Node* insertProduct() {
+Node* insertProduct(Node* root) {
     char name[STRING_LENGHT], description[STRING_LENGHT], supplier[STRING_LENGHT];
     int code, quantity, guarantee;
     float price; 
@@ -184,7 +184,8 @@ Node* insertProduct() {
 
     printf("\n<* Produto cadastrado! *>\n");
 
-    return createNode(code, name, description, quantity, price, guarantee, supplier);
+    Node* newNode = createNode(code, name, description, quantity, price, guarantee, supplier);
+    root = insert(root, newNode);
 }
 
 void consultProduct(Node* root) {
@@ -414,7 +415,7 @@ void menu(Node* root){
             "\n  > 3. Remover produto"
             "\n  > 4. Listar produto"
             "\n  > 5. Buscar por descricao"
-            "\n  > 6. Buscar por preço"
+            "\n  > 6. Buscar por preco"
             "\n  > 7. Contar produtos"
             "\n  > 8. Sair"
             "\n============================="
@@ -424,7 +425,7 @@ void menu(Node* root){
 
         switch (option) {
             case 1: {
-                insertProduct();
+                insertProduct(root);
                 break;
 
             }
