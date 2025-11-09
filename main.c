@@ -43,13 +43,15 @@ Node* insert(Node* root, Node* newNode) {
         
     if (newNode->code < root->code) {
 	    root->left = insert(root->left, newNode);
+        printf("\n<* Produto cadastrado! *>\n");
 	    return root;
     } else {
         if (newNode->code > root->code) {
 		    root->right = insert(root->right, newNode);
+            printf("\n<* Produto cadastrado! *>\n");
 	        return root;
 	    } else {
-            printf("\n<* Codigo existente! *>\n");
+            printf("\n<* Codigo ja existente, tente novamente! *>\n");
             return root;
         }
     }
@@ -141,7 +143,6 @@ void inOrder(Node* root) {
 
         inOrder(root->right);
     }
-
 }
 
 void afterOrder(Node* root) {
@@ -157,6 +158,11 @@ void afterOrder(Node* root) {
 }
 
 // Menu Functions
+void clearBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 void insertProduct(Node** root) {
     char name[STRING_LENGHT], description[STRING_LENGHT], supplier[STRING_LENGHT];
     int code, quantity, guarantee;
@@ -169,8 +175,17 @@ void insertProduct(Node** root) {
         "\n"
     );
 
-    printf("\nCodigo >> ");
-    scanf("%d", &code);
+
+    while (1) {
+        printf("\nCodigo >> ");
+        if (scanf("%d", &code) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas números.\n");
+            clearBuffer();
+        }
+    }
 
     printf("\nNome >> ");
     scanf(" %[^\n]", name);
@@ -178,22 +193,44 @@ void insertProduct(Node** root) {
     printf("\nDescricao >> ");
     scanf(" %[^\n]", description);
 
-    printf("\nQuantidade >> ");
-    scanf("%d", &quantity);
+    while (1) {
+        printf("\nQuantidade >> ");
+        if (scanf("%d", &quantity) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros inteiros.\n");
+            clearBuffer();
+        }
+    }
 
-    printf("\nPreco >> ");
-    scanf("%f", &price);
+    while (1) {
+        printf("\nPreco >> ");
+        if (scanf("%f", &price) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros (use ponto para decimais, ex: 10.50).\n");
+            clearBuffer();
+        }
+    }
 
-    printf("\nGarantia (meses) >> ");
-    scanf("%d", &guarantee);
+    while (1) {
+        printf("\nGarantia (meses) >> ");
+        if (scanf("%d", &guarantee) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros inteiros.\n");
+            clearBuffer();
+        }
+    }
 
     printf("\nFornecedor >> ");
     scanf(" %[^\n]", supplier);
 
     Node* newNode = createNode(code, name, description, quantity, price, guarantee, supplier);
     *root = insert(*root, newNode);
-
-    printf("\n<* Produto cadastrado! *>\n");
 
 
 }
@@ -213,8 +250,16 @@ void consultProduct(Node* root) {
         return;
     }
 
-    printf("\nCodigo >> ");
-    scanf("%d", &code);
+    while (1) {
+        printf("\nCodigo >> ");
+        if (scanf("%d", &code) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros inteiros.\n");
+            clearBuffer();
+        }
+    }
 
     Node* result = consult(root, code);
 
@@ -251,8 +296,16 @@ void removeProduct(Node** root) {
         return;
     }
 
-    printf("\nCodigo >> ");
-    scanf("%d", &code);
+    while (1) {
+        printf("\nCodigo >> ");
+        if (scanf("%d", &code) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros inteiros.\n");
+            clearBuffer();
+        }
+    }
 
     Node* found = consult(*root, code);
 
@@ -265,7 +318,7 @@ void removeProduct(Node** root) {
     strcpy(nomeTemp, found->name); // guarda nome antes de remover
     *root = removeNode(*root, code);
 
-    printf("\n<* Produto %s removido! *>\n", nomeTemp);
+    printf("\n<* Produto \"%s\" removido! *>\n", nomeTemp);
 
 }
 
@@ -276,6 +329,11 @@ void listProductsInOrder(Node* root) {
         "\n+---------------------------+"
         "\n"
     );
+
+    if(root == NULL){
+        printf("\n<* Nenhum produto cadastrado *>\n");
+        return;
+    }
 
     inOrder(root);
     printf("\n");
@@ -289,17 +347,26 @@ void listProductsPreOrder(Node* root) {
         "\n"
     );
 
+    if(root == NULL){
+        printf("\n<* Nenhum produto cadastrado *>\n");
+        return;
+    }
     preOrder(root);
     printf("\n");
 }
 
-void listProductsAterOrder(Node* root) {
+void listProductsAfterOrder(Node* root) {
     printf(
         "\n+---------------------------+"
         "\n|   LISTAGEM EM POS ORDEM   |"
         "\n+---------------------------+"
         "\n"
     );
+
+    if(root == NULL){
+        printf("\n<* Nenhum produto cadastrado *>\n");
+        return;
+    }
 
     afterOrder(root);
     printf("\n");
@@ -348,7 +415,7 @@ void consultProductsParcialDescription(Node* root) {
     }
 
     printf("\nDescricao (parcial) >> ");
-    scanf(" %[^\n]", &description);
+    scanf(" %[^\n]", description);
 
     printf(
         "\n+---------------------------+"
@@ -360,7 +427,7 @@ void consultProductsParcialDescription(Node* root) {
     searchByPartialDescription(root, description, &productsCount);
 
     if (productsCount == 0) {
-        printf("\n<* Nenhum produto cadastrado *>\n");
+        printf("\n<* Nenhum produto encontrado *>\n");
     }
 
 }
@@ -381,11 +448,33 @@ void consultProductsPriceRange(Node* root) {
         return;
     }
 
-    printf("\nPreco minimo >> ");
-    scanf("%f", &min);
+    while (1) {
+        printf("\nPreco minimo >> ");
+        if (scanf("%f", &min) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros (use ponto para decimais, ex: 10.50).\n");
+            clearBuffer();
+        }
+    }
 
-    printf("\nPreco maximo >> ");
-    scanf("%f", &max);
+
+    while (1) {
+        printf("\nPreco maximo >> ");
+        if (scanf("%f", &max) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros (use ponto para decimais, ex: 10.50).\n");
+            clearBuffer();
+        }
+    }
+
+    if (min > max) {
+        printf("\n<* O preco minimo nao pode ser maior que o maximo! *>\n");
+        return;
+    }
 
     printf(
         "\n+---------------------------+"
@@ -396,12 +485,13 @@ void consultProductsPriceRange(Node* root) {
 
     searchByPriceRange(root, min, max, &productsCount);
 
-    if (root == NULL) {
-        printf("\n<* Nenhum produto cadastrado! *>\n");
+    if (productsCount == 0) {
+        printf("\n<* Nenhum produto encontrado no intervalo! *>\n");
         return;
 
 }
 }
+
 int countNodes(Node* root) {
     if (root == NULL){
         return 0;
@@ -441,10 +531,20 @@ void menu(Node** root){
             "\n  > 6. Buscar por preco"
             "\n  > 7. Contar produtos"
             "\n  > 8. Sair"
-            "\n============================="
-            "\nOpcao desejada >> "
+            "\n=============================\n"
+            //"\nOpcao desejada >> "
         );
-        scanf("%d", &option);
+
+        while (1) {
+        printf("Opcao desejada >> ");
+            if (scanf("%d", &option) == 1) {
+            clearBuffer();
+            break;
+        } else {
+            printf("Entrada invalida! Digite apenas numeros inteiros.\n");
+            clearBuffer();
+        }
+    }
 
         switch (option) {
             case 1: {
@@ -475,10 +575,19 @@ void menu(Node** root){
                         "\n  > 2. Pre ordem"
                         "\n  > 3. Pos ordem"
                         "\n  > 4. Sair"
-                        "\n============================="
-                        "\nOpcao desejada >> "
+                        "\n=============================\n"
+                        //"\nOpcao desejada >> "
                     );
-                    scanf("%d", &listOption);
+                    while (1) {
+                        printf("Opcao desejada >> ");
+                        if (scanf("%d", &listOption) == 1) {
+                        clearBuffer();
+                        break;
+                    } else {
+                        printf("Entrada invalida! Digite apenas numeros inteiros.\n");
+                        clearBuffer();
+                    }
+                }
 
                     switch(listOption) {
                         case 1: 
@@ -490,7 +599,7 @@ void menu(Node** root){
                             break;
 
                         case 3: 
-                            listProductsAterOrder(*root); 
+                            listProductsAfterOrder(*root); 
                             break;
                             
                         case 4: 
