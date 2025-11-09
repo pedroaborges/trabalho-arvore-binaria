@@ -774,7 +774,7 @@ void menu(Node** root){
                         "\n  > 1. Em ordem"
                         "\n  > 2. Pre ordem"
                         "\n  > 3. Pos ordem"
-                        "\n  > 4. Sair"
+                        "\n  > 4. Retornar ao menu"
                         "\n=============================\n"
                         //"\nOpcao desejada >> "
                     );
