@@ -1,25 +1,38 @@
-// Libraries
+// Bibliotecas
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-// Settings
+// Configuracoes
 #define STRING_LENGHT 100
 
-// Node Struct
+// Estrutura do No
 typedef struct Node {
-    int code;                           // Search code (unique)
-    char name[STRING_LENGHT];           // Product's name
-    char description[STRING_LENGHT];    // Product's description
-    int quantity;                       // In stock quantity
-    float price;                        // Product's price
-    int guarantee;                      // Optional: product's guarantee in months
-    char supplier[STRING_LENGHT];       // Optional: Supllier's name
-    struct Node* left;                  // Pointer to the left node
-    struct Node* right;                 // Pointer to the right node
+    int code;                           
+    char name[STRING_LENGHT];           
+    char description[STRING_LENGHT];    
+    int quantity;                       
+    float price;                        
+    int guarantee;                      // Opcional: garantia
+    char supplier[STRING_LENGHT];       // Opcional: fornecedor
+    struct Node* left;                  
+    struct Node* right;                 
 } Node;
 
-// Node Struct Implementation Functions
+/*
+ * Função: createNode
+ * Descrição: Cria um novo nó de produto com os dados informados.
+ * Parâmetros:
+ *     code - código único do produto.
+ *     name - nome do produto.
+ *     description - descrição do produto.
+ *     quantity - quantidade em estoque.
+ *     price - preço do produto.
+ *     guarantee - garantia em meses.
+ *     supplier - nome do fornecedor.
+ * Retorna:
+ *     Ponteiro para o novo nó criado.
+ */
 Node* createNode(int code, char name[], char description[], int quantity, float price, int guarantee,  char supplier[]) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->code = code;
@@ -36,6 +49,15 @@ Node* createNode(int code, char name[], char description[], int quantity, float 
     return newNode;
 }
 
+/*
+ * Função: insert
+ * Descrição: Insere um novo nó na árvore binária de busca, respeitando a ordenação por código.
+ * Parâmetros:
+ *     root - nó raiz da árvore.
+ *     newNode - nó a ser inserido.
+ * Retorna:
+ *     Ponteiro para a nova raiz da árvore.
+ */
 Node* insert(Node* root, Node* newNode) {
     if (root == NULL) {
         return newNode;
@@ -57,6 +79,15 @@ Node* insert(Node* root, Node* newNode) {
     }
 }
 
+/*
+ * Função: consult
+ * Descrição: Busca um produto pelo código informado.
+ * Parâmetros:
+ *     root - nó raiz da árvore.
+ *     code - código do produto a ser consultado.
+ * Retorna:
+ *     Ponteiro para o nó encontrado ou NULL se não existir.
+ */
 Node* consult(Node* root, int code) {
     if (root == NULL || root->code == code) {
         return root;
@@ -69,6 +100,14 @@ Node* consult(Node* root, int code) {
     }
 }
 
+/*
+ * Função: smallestValue
+ * Descrição: Encontra o nó com o menor valor de código.
+ * Parâmetros:
+ *     root - nó raiz.
+ * Retorna:
+ *     Ponteiro para o nó de menor código.
+ */
 Node* smallestValue(Node* root) {
     Node* current = root;
 
@@ -79,6 +118,15 @@ Node* smallestValue(Node* root) {
     return current;
 }
 
+/*
+ * Função: removeNode
+ * Descrição: Remove um nó da árvore binária mantendo a ordenação.
+ * Parâmetros:
+ *     root - nó raiz da árvore.
+ *     code - código do produto a ser removido.
+ * Retorna:
+ *     Ponteiro para a nova raiz da árvore.
+ */
 Node* removeNode(Node* root, int code) {
     if (root == NULL) {
         return root;
@@ -120,6 +168,14 @@ Node* removeNode(Node* root, int code) {
     return root;
 }
 
+/*
+ * Funções: preOrder
+ * Descrição: Realiza percurso na árvore (pré ordem).
+ * Parâmetros:
+ *     root - nó raiz.
+ * Retorna:
+ *     void
+ */
 void preOrder(Node* root) {
     if (root != NULL) {
         printf(
@@ -132,6 +188,14 @@ void preOrder(Node* root) {
     }
 }
 
+/*
+ * Funções: inOrder
+ * Descrição: Realiza percurso na árvore (em ordem).
+ * Parâmetros:
+ *     root - nó raiz.
+ * Retorna:
+ *     void
+ */
 void inOrder(Node* root) {
     if (root != NULL) {
         inOrder(root->left);
@@ -145,6 +209,14 @@ void inOrder(Node* root) {
     }
 }
 
+/*
+ * Funções: afterOrder
+ * Descrição: Realiza percurso na árvore (pós-ordem).
+ * Parâmetros:
+ *     root - nó raiz.
+ * Retorna:
+ *     void
+ */
 void afterOrder(Node* root) {
     if (root != NULL) {
         afterOrder(root->left);
@@ -157,12 +229,27 @@ void afterOrder(Node* root) {
     }
 }
 
-// Menu Functions
+/*
+ * Função: clearBuffer
+ * Descrição: Limpa o buffer do teclado após uso do scanf.
+ * Parâmetros:
+ *     Nenhum
+ * Retorna:
+ *     void
+ */
 void clearBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+/*
+ * Função: insertProduct
+ * Descrição: Solicita dados do usuário e insere um novo produto na árvore.
+ * Parâmetros:
+ *     root - ponteiro duplo para o nó raiz.
+ * Retorna:
+ *     void
+ */
 void insertProduct(Node** root) {
     char name[STRING_LENGHT], description[STRING_LENGHT], supplier[STRING_LENGHT];
     int code, quantity, guarantee;
@@ -235,6 +322,14 @@ void insertProduct(Node** root) {
 
 }
 
+/*
+ * Função: consultProduct
+ * Descrição: Consulta um produto na árvore pelo código.
+ * Parâmetros:
+ *     root - nó raiz da árvore.
+ * Retorna:
+ *     void
+ */
 void consultProduct(Node* root) {
     int code;
 
@@ -281,6 +376,14 @@ void consultProduct(Node* root) {
     );
 }
 
+/*
+ * Função: removeProduct
+ * Descrição: Remove um produto da árvore pelo código.
+ * Parâmetros:
+ *     root - ponteiro duplo para a raiz.
+ * Retorna:
+ *     void
+ */
 void removeProduct(Node** root) {
     int code;
 
@@ -322,6 +425,15 @@ void removeProduct(Node** root) {
 
 }
 
+/*
+ * Funções: listProductsInOrder
+ * Descrição: Exibe um cabeçalho e chama a função inOrder para listar os produtos 
+ * em ordem crescente de código.
+ * Parâmetros:
+ *     root - nó raiz.
+ * Retorna:
+ *     void
+ */
 void listProductsInOrder(Node* root) {
     printf(
         "\n+---------------------------+"
@@ -339,6 +451,15 @@ void listProductsInOrder(Node* root) {
     printf("\n");
 }
 
+/*
+ * Funções: listProductsPreOrder
+ * Descrição: Exibe um cabeçalho e chama a função preOrder para listar os produtos 
+ * na ordem Raiz, Esquerda, Direita.
+ * Parâmetros:
+ *     root - nó raiz.
+ * Retorna:
+ *     void
+ */
 void listProductsPreOrder(Node* root) {
     printf(
         "\n+---------------------------+"
@@ -355,6 +476,15 @@ void listProductsPreOrder(Node* root) {
     printf("\n");
 }
 
+/*
+ * Funções: listProductsAfterOrder
+ * Descrição: Exibe um cabeçalho e chama a função afterOrder para listar os produtos 
+ * na ordem Esquerda, Direita, Raiz.
+ * Parâmetros:
+ *     root - nó raiz.
+ * Retorna:
+ *     void
+ */
 void listProductsAfterOrder(Node* root) {
     printf(
         "\n+---------------------------+"
@@ -372,6 +502,18 @@ void listProductsAfterOrder(Node* root) {
     printf("\n");
 }
 
+/*
+ * Função: searchByPartialDescription
+ * Descrição: Percorre a árvore (em ordem) e imprime os produtos cuja descrição 
+ * contém a substring de consulta informada. Utiliza a função 'strstr' para 
+ * verificar a ocorrência da substring.
+ * Parâmetros:
+ *     root - nó raiz da subárvore atual.
+ *     query - string parcial a ser buscada na descrição.
+ *     foundCount - ponteiro para um contador de produtos encontrados.
+ * Retorna:
+ *     void
+ */
 void searchByPartialDescription(Node* root, const char* query, int* foundCount) {
     if (root == NULL) return;
     searchByPartialDescription(root->left, query, foundCount);
@@ -385,6 +527,18 @@ void searchByPartialDescription(Node* root, const char* query, int* foundCount) 
     searchByPartialDescription(root->right, query, foundCount);
 }
 
+/*
+ * Função: searchByPriceRange
+ * Descrição: Percorre a árvore (em ordem) e imprime os produtos cujo preço está 
+ * dentro do intervalo [min, max] informado, incluindo os limites.
+ * Parâmetros:
+ *     root - nó raiz da subárvore atual.
+ *     min - preço mínimo do intervalo.
+ *     max - preço máximo do intervalo.
+ *     foundCount - ponteiro para um contador de produtos encontrados.
+ * Retorna:
+ *     void
+ */
 void searchByPriceRange(Node* root, float min, float max, int* foundCount) {
     if (root == NULL) return;
     searchByPriceRange(root->left, min, max, foundCount);
@@ -398,6 +552,16 @@ void searchByPriceRange(Node* root, float min, float max, int* foundCount) {
     searchByPriceRange(root->right, min, max, foundCount);
 }
 
+/*
+ * Função: consultProductsParcialDescription
+ * Descrição: Gerencia a interface para a busca por descrição parcial. Solicita a 
+ * descrição ao usuário e chama 'searchByPartialDescription' para realizar a busca.
+ * Exibe o número de produtos encontrados ou uma mensagem de "não encontrado".
+ * Parâmetros:
+ *     root - nó raiz da árvore.
+ * Retorna:
+ *     void
+ */
 void consultProductsParcialDescription(Node* root) {
     char description[STRING_LENGHT];
     int productsCount = 0;
@@ -432,6 +596,16 @@ void consultProductsParcialDescription(Node* root) {
 
 }
 
+/*
+ * Função: consultProductsPriceRange
+ * Descrição: Gerencia a interface para a busca por faixa de preço. Solicita os 
+ * preços mínimo e máximo, valida o intervalo e chama 'searchByPriceRange' para a busca.
+ * Exibe os resultados ou uma mensagem de "não encontrado no intervalo".
+ * Parâmetros:
+ *     root - nó raiz da árvore.
+ * Retorna:
+ *     void
+ */
 void consultProductsPriceRange(Node* root) {
     float min, max;
     int productsCount = 0;
@@ -492,6 +666,15 @@ void consultProductsPriceRange(Node* root) {
 }
 }
 
+/*
+ * Função: countNodes
+ * Descrição: Calcula recursivamente o número total de nós (produtos) na árvore 
+ * binária. É a implementação da lógica de contagem.
+ * Parâmetros:
+ *     root - nó raiz da subárvore atual.
+ * Retorna:
+ *     O número total de nós na subárvore.
+ */
 int countNodes(Node* root) {
     if (root == NULL){
         return 0;
@@ -500,6 +683,15 @@ int countNodes(Node* root) {
     return 1 + countNodes(root->left) + countNodes(root->right);
 }
 
+/*
+ * Função: countProducts
+ * Descrição: Função de interface. Chama a função recursiva 'countNodes' para obter 
+ * o total de produtos cadastrados e exibe este número ao usuário de forma amigável.
+ * Parâmetros:
+ *     root - nó raiz da árvore.
+ * Retorna:
+ *     void
+ */
 void countProducts(Node* root) {
     int productsCount = countNodes(root);
 
@@ -513,7 +705,15 @@ void countProducts(Node* root) {
     printf("\n<* %d produtos cadastrados! *>\n", productsCount);
 }
 
-// Menu
+/*
+ * Função: menu
+ * Descrição: Exibe o menu principal da aplicação (TechInfo), lendo a opção 
+ * do usuário e direcionando para a função correspondente.
+ * Parâmetros:
+ *  root - ponteiro duplo para o nó raiz, permitindo a modificação da raiz.
+ * Retorna:
+ *  void
+ */
 void menu(Node** root){
     int option;
 
@@ -642,6 +842,15 @@ void menu(Node** root){
     } while (option != 8);
 }
 
+/*
+ * Função: main
+ * Descrição: Ponto de entrada do programa. Inicializa a raiz da árvore binária 
+ * de busca (BST) como NULL e chama a função menu.
+ * Parâmetros:
+ *  Nenhum
+ * Retorna:
+ *  0 
+ */
 int main(){
     Node* root = NULL;
     menu(&root);
